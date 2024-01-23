@@ -1,0 +1,7 @@
+.idea/
+.vscode/
+*~
+*.autosave
+*.swp
+.DS_Store
+Thumbs.db
