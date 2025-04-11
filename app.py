@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import json
+import os
 
 import requests
 from flask import (Flask, g, make_response, request, send_from_directory,
@@ -79,6 +80,25 @@ def _get_config(key, fallback=None):
             app.logger.critical(str(e))
             g.config = dict()
     return g.config.get(key, fallback)
+
+
+def _write_status(key_values):
+    status = dict()
+    fp = '/config/status.json'
+    if os.path.exists(fp):
+        try:
+            with open(fp, 'r') as f:
+                status = json.load(f)
+        except Exception as e:
+            app.logger.critical(str(e))
+    for key, value in key_values.items():
+        status[key] = value
+    try:
+        with open(fp + '~', 'w') as f:
+            f.write(json.dumps(status, indent=4))
+        os.replace(fp + '~', fp)
+    except Exception as e:
+        app.logger.critical(str(e))
 
 
 def _build_headers():
@@ -275,6 +295,12 @@ def parts_query():
         errors.append(query_json['message'])
     for error in errors:
         app.logger.warning("GraphQL Error: " + str(error))
+
+    # Handle quota limit.
+    next_access_time = query_json.get('nextAccessTime')
+    if (len(data) == 0) and (next_access_time is not None):
+        app.logger.warning("Quota limit: " + str(next_access_time))
+        _write_status(dict(next_access_time=next_access_time))
 
     # Convert query response data and return it to the client.
     tx = dict(parts=[])

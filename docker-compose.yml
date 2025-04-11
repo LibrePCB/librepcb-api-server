@@ -9,7 +9,7 @@ services:
     ports:
       - 8000:8000
     volumes:
-      - './config:/config:ro'
+      - './config:/config'
     environment:
       FLASK_RUN_DEBUG: 1
       FLASK_RUN_HOST: '0.0.0.0'
