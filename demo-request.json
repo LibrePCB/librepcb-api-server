@@ -3,6 +3,10 @@
       {
         "mpn": "1N4148",
         "manufacturer": "Vishay"
+      },
+      {
+        "mpn": "NE555P",
+        "manufacturer": "Texas Instruments"
       }
     ]
 }
