@@ -112,7 +112,7 @@ class Partstack:
                     self._add_availability(parts[i], summary)
                     self._add_prices(parts[i], summary)
                     self._add_resources(parts[i], product)
-                    self._db.add_parts_cache(self.ID, parts[i])
+                self._db.add_parts_cache(self.ID, parts[i])
         return 0
 
     def _build_headers(self):
