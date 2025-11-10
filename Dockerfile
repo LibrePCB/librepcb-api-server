@@ -12,7 +12,7 @@ RUN apk add --no-cache \
   py3-requests-pyc
 
 # Copy files.
-COPY app.py app/
+COPY *.py app/
 COPY static/ app/static/
 WORKDIR app
 
