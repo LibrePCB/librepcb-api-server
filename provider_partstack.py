@@ -66,10 +66,11 @@ class Partstack:
     URL = 'https://partstack.com'
     LOGO_FILENAME = 'parts-provider-partstack.png'
 
-    def __init__(self, query_url, query_token, query_timeout, logger):
+    def __init__(self, query_url, query_token, query_timeout, db, logger):
         self._query_url = query_url
         self._query_token = query_token
         self._query_timeout = query_timeout
+        self._db = db
         self._logger = logger
 
     def fetch(self, parts, status):
@@ -111,6 +112,8 @@ class Partstack:
                     self._add_availability(parts[i], summary)
                     self._add_prices(parts[i], summary)
                     self._add_resources(parts[i], product)
+                    self._db.add_parts_cache(self.ID, parts[i])
+        return 0
 
     def _build_headers(self):
         return {

@@ -2,17 +2,21 @@
 
 import json
 import os
+import sqlite3
 
 from flask import (Flask, g, make_response, request, send_from_directory,
                    url_for)
 from werkzeug.middleware.proxy_fix import ProxyFix
 
+from database import Database
+from provider_cache import PartsCache
 from provider_partstack import Partstack
 
 app = Flask(__name__)
 app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 
 PARTS_MAX_COUNT = 10
+PARTS_CACHE_MAX_AGE = 30*24*3600  # 30 days due to quota limits
 PARTS_QUERY_TIMEOUT = 8.0
 
 
@@ -46,6 +50,20 @@ def _write_status(key_values):
         app.logger.critical(str(e))
 
 
+def _get_db():
+    db = getattr(g, '_db', None)
+    if db is None:
+        db = g._database = sqlite3.connect('/config/db.sqlite')
+    return db
+
+
+@app.teardown_appcontext
+def _close_db(exception):
+    db = getattr(g, '_db', None)
+    if db is not None:
+        db.close()
+
+
 @app.route('/api/v1/parts', methods=['GET'])
 def parts():
     enabled = _get_config('parts_operational', False)
@@ -71,21 +89,37 @@ def parts_query():
     parts = payload['parts'][:PARTS_MAX_COUNT]
     parts = [dict(mpn=p['mpn'], manufacturer=p['manufacturer']) for p in parts]
 
-    # Fetch parts from provider.
+    # Prepare database.
+    db = Database(_get_db(), app.logger)
+
+    # Fetch parts from providers.
     status = dict()
-    provider = Partstack(_get_config('parts_query_url'),
-                         _get_config('parts_query_token'),
-                         PARTS_QUERY_TIMEOUT, app.logger)
-    provider.fetch(parts, status)
+    cache_hits = 0
+    providers = [
+        PartsCache(db, max_age=PARTS_CACHE_MAX_AGE),
+        Partstack(_get_config('parts_query_url'),
+                  _get_config('parts_query_token'),
+                  PARTS_QUERY_TIMEOUT, db, app.logger),
+    ]
+    for provider in providers:
+        cache_hits += provider.fetch(parts, status)
 
     # Handle status changes.
     if len(status):
         _write_status(status)
 
     # Complete parts which were not found.
+    found = 0
     for part in parts:
         if 'results' not in part:
             part['results'] = 0
+        if part['results'] > 0:
+            found += 1
+
+    # Store request in database.
+    app.logger.debug(f"Queried {len(parts)} parts, {cache_hits} from cache: "
+                     f"{found} found, {len(parts) - found} not found")
+    db.add_parts_request(len(parts), cache_hits, found)
 
     # Return response.
     return dict(parts=parts)
