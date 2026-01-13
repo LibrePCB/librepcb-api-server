@@ -66,7 +66,7 @@ def _close_db(exception):
 
 @app.route('/api/v1/parts', methods=['GET'])
 def parts():
-    enabled = _get_config('parts_operational', False)
+    enabled = True  # _get_config('parts_operational', False)
     provider = Partstack
     response = make_response(dict(
         provider_name=provider.NAME,
@@ -97,10 +97,11 @@ def parts_query():
     cache_hits = 0
     providers = [
         PartsCache(db, max_age=PARTS_CACHE_MAX_AGE),
-        Partstack(_get_config('parts_query_url'),
-                  _get_config('parts_query_token'),
-                  PARTS_QUERY_TIMEOUT, db, app.logger),
     ]
+    if _get_config('parts_operational', False):
+        providers.append(Partstack(_get_config('parts_query_url'),
+                                   _get_config('parts_query_token'),
+                                   PARTS_QUERY_TIMEOUT, db, app.logger))
     for provider in providers:
         cache_hits += provider.fetch(parts, status)
 

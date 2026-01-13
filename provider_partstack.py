@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import random
+
 import requests
 
 QUERY_FRAGMENT = """
@@ -78,6 +80,12 @@ class Partstack:
         # there are no parts to be requested.
         filtered_parts = [p for p in parts if 'results' not in p]
         if len(filtered_parts) == 0:
+            return 0
+
+        # Temporarily discard some requests due to rate limit problem.
+        if len(filtered_parts) < 5:
+            return 0
+        if random.randrange(0, 3) == 0:
             return 0
 
         # Request parts data.
