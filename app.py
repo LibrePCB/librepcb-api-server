@@ -15,8 +15,8 @@ from provider_partstack import Partstack
 app = Flask(__name__)
 app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 
-PARTS_MAX_COUNT = 10
-PARTS_CACHE_MAX_AGE = 30*24*3600  # 30 days due to quota limits
+PARTS_MAX_COUNT = 15
+PARTS_CACHE_MAX_AGE = 60*24*3600  # 60 days due to quota limits
 PARTS_QUERY_TIMEOUT = 8.0
 
 
