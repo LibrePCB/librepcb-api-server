@@ -74,11 +74,17 @@ class Partstack:
         self._logger = logger
 
     def fetch(self, parts, status):
+        # Filter out the parts which need to be requested and abort if
+        # there are no parts to be requested.
+        filtered_parts = [p for p in parts if 'results' not in p]
+        if len(filtered_parts) == 0:
+            return 0
+
         # Request parts data.
         query_response = requests.post(
             self._query_url,
             headers=self._build_headers(),
-            json=self._build_request(parts),
+            json=self._build_request(filtered_parts),
             timeout=self._query_timeout,
         )
         query_json = query_response.json()
@@ -127,10 +133,13 @@ class Partstack:
         queries = []
         variables = {}
         for i in range(len(parts)):
-            query = 'q{}:findStocks(mfgpartno:$mpn{}){{...f}}'.format(i, i)
-            args.append('$mpn{}:String!'.format(i))
-            queries.append(query)
-            variables['mpn{}'.format(i)] = parts[i]['mpn']
+            if 'results' not in parts[i]:
+                query = 'q{}:findStocks(mfgpartno:$mpn{}){{...f}}'.format(i, i)
+                args.append('$mpn{}:String!'.format(i))
+                queries.append(query)
+                variables['mpn{}'.format(i)] = parts[i]['mpn']
+        if len(queries) == 0:
+            return None
         query = 'query Stocks({}) {{\n{}\n}}'.format(
             ','.join(args),
             '\n'.join(queries)
