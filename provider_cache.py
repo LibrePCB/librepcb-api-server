@@ -6,7 +6,7 @@ class PartsCache:
         self._db = db
         self._max_age = max_age
 
-    def fetch(self, parts, status):
+    def fetch(self, parts):
         hits = 0
         for part in parts:
             if 'results' not in part:

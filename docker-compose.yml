@@ -9,9 +9,11 @@ services:
     ports:
       - 8000:8000
     volumes:
-      - './config:/config'
+      - './data:/data'
     environment:
       FLASK_RUN_DEBUG: 1
       FLASK_RUN_HOST: '0.0.0.0'
       FLASK_RUN_PORT: 8000  # Same as Gunicorn
+      DIGIKEY_CLIENT_ID:
+      DIGIKEY_CLIENT_SECRET:
     entrypoint: ['flask', 'run']

@@ -4,5 +4,6 @@
 *.autosave
 *.swp
 .DS_Store
-config/
+data/
 Thumbs.db
+.env

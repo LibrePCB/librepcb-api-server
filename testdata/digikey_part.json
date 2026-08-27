@@ -1,0 +1,263 @@
+{
+    "SearchLocaleUsed": {
+        "Site": "US",
+        "Language": "en",
+        "Currency": "USD"
+    },
+    "Product": {
+        "Description": {
+            "ProductDescription": "CAP ALUM 1000UF 20% 35V RADIAL",
+            "DetailedDescription": "1000 µF 35 V Aluminum Electrolytic Capacitors Radial, Can 2000 Hrs @ 105°C"
+        },
+        "Manufacturer": {
+            "Id": 10,
+            "Name": "Panasonic Industry"
+        },
+        "ManufacturerProductNumber": "ECA-1VHG102",
+        "UnitPrice": 1.41,
+        "ProductUrl": "https://www.digikey.com/en/products/detail/panasonic-industry/ECA-1VHG102/245154",
+        "DatasheetUrl": "https://industrial.panasonic.com/cdbs/www-data/pdf/RDF0000/ABA0000C1215.pdf",
+        "PhotoUrl": "https://mm.digikey.com/Volume0/opasdata/d220001/medias/images/630/NHG12-SERIES.jpg",
+        "ProductVariations": [
+            {
+                "DigiKeyProductNumber": "P5555-ND",
+                "PackageType": {
+                    "Id": 3,
+                    "Name": "Bulk"
+                },
+                "StandardPricing": [
+                    {
+                        "BreakQuantity": 1,
+                        "UnitPrice": 1.41,
+                        "TotalPrice": 1.41
+                    },
+                    {
+                        "BreakQuantity": 10,
+                        "UnitPrice": 0.908,
+                        "TotalPrice": 9.080
+                    },
+                    {
+                        "BreakQuantity": 50,
+                        "UnitPrice": 0.698,
+                        "TotalPrice": 34.900
+                    },
+                    {
+                        "BreakQuantity": 200,
+                        "UnitPrice": 0.57645,
+                        "TotalPrice": 115.29000
+                    },
+                    {
+                        "BreakQuantity": 600,
+                        "UnitPrice": 0.5073,
+                        "TotalPrice": 304.3800
+                    },
+                    {
+                        "BreakQuantity": 1000,
+                        "UnitPrice": 0.48144,
+                        "TotalPrice": 481.44000
+                    },
+                    {
+                        "BreakQuantity": 2600,
+                        "UnitPrice": 0.44158,
+                        "TotalPrice": 1148.10800
+                    },
+                    {
+                        "BreakQuantity": 5000,
+                        "UnitPrice": 0.41963,
+                        "TotalPrice": 2098.15000
+                    }
+                ],
+                "MyPricing": [],
+                "MarketPlace": false,
+                "TariffActive": true,
+                "Supplier": {
+                    "Id": 10,
+                    "Name": "Panasonic Industry"
+                },
+                "QuantityAvailableforPackageType": 6152,
+                "MaxQuantityForDistribution": 0,
+                "MinimumOrderQuantity": 1,
+                "StandardPackage": 0,
+                "DigiReelFee": 0.0
+            }
+        ],
+        "QuantityAvailable": 6152,
+        "ProductStatus": {
+            "Id": 0,
+            "Status": "Active"
+        },
+        "BackOrderNotAllowed": false,
+        "NormallyStocking": true,
+        "Discontinued": false,
+        "EndOfLife": false,
+        "Ncnr": false,
+        "PrimaryVideoUrl": "",
+        "Parameters": [
+            {
+                "ParameterId": 2049,
+                "ParameterText": "Capacitance",
+                "ParameterType": "UnitOfMeasure",
+                "ValueId": "1000 µF",
+                "ValueText": "1000 µF"
+            },
+            {
+                "ParameterId": 3,
+                "ParameterText": "Tolerance",
+                "ParameterType": "String",
+                "ValueId": "1900",
+                "ValueText": "±20%"
+            },
+            {
+                "ParameterId": 2079,
+                "ParameterText": "Voltage - Rated",
+                "ParameterType": "UnitOfMeasure",
+                "ValueId": "35 V",
+                "ValueText": "35 V"
+            },
+            {
+                "ParameterId": 724,
+                "ParameterText": "ESR (Equivalent Series Resistance)",
+                "ParameterType": "String",
+                "ValueId": "1",
+                "ValueText": "-"
+            },
+            {
+                "ParameterId": 725,
+                "ParameterText": "Lifetime @ Temp.",
+                "ParameterType": "String",
+                "ValueId": "140003",
+                "ValueText": "2000 Hrs @ 105°C"
+            },
+            {
+                "ParameterId": 252,
+                "ParameterText": "Operating Temperature",
+                "ParameterType": "String",
+                "ValueId": "242904",
+                "ValueText": "-55°C ~ 105°C"
+            },
+            {
+                "ParameterId": 52,
+                "ParameterText": "Polarization",
+                "ParameterType": "String",
+                "ValueId": "388275",
+                "ValueText": "Polar"
+            },
+            {
+                "ParameterId": 707,
+                "ParameterText": "Ratings",
+                "ParameterType": "String",
+                "ValueId": "1",
+                "ValueText": "-"
+            },
+            {
+                "ParameterId": 405,
+                "ParameterText": "Applications",
+                "ParameterType": "String",
+                "ValueId": "350483",
+                "ValueText": "General Purpose"
+            },
+            {
+                "ParameterId": 2253,
+                "ParameterText": "Ripple Current @ Low Frequency",
+                "ParameterType": "CoupledUnitOfMeasure",
+                "ValueId": "810 mA @ 120 Hz",
+                "ValueText": "810 mA @ 120 Hz"
+            },
+            {
+                "ParameterId": 2260,
+                "ParameterText": "Ripple Current @ High Frequency",
+                "ParameterType": "CoupledUnitOfMeasure",
+                "ValueId": "931.5 mA @ 100 kHz",
+                "ValueText": "931.5 mA @ 100 kHz"
+            },
+            {
+                "ParameterId": 508,
+                "ParameterText": "Lead Spacing",
+                "ParameterType": "String",
+                "ValueId": "13741",
+                "ValueText": "0.197\" (5.00mm)"
+            },
+            {
+                "ParameterId": 46,
+                "ParameterText": "Size / Dimension",
+                "ParameterType": "String",
+                "ValueId": "24783",
+                "ValueText": "0.492\" Dia (12.50mm)"
+            },
+            {
+                "ParameterId": 1500,
+                "ParameterText": "Height - Seated (Max)",
+                "ParameterType": "String",
+                "ValueId": "35710",
+                "ValueText": "0.866\" (22.00mm)"
+            },
+            {
+                "ParameterId": 884,
+                "ParameterText": "Surface Mount Land Size",
+                "ParameterType": "String",
+                "ValueId": "1",
+                "ValueText": "-"
+            },
+            {
+                "ParameterId": 69,
+                "ParameterText": "Mounting Type",
+                "ParameterType": "String",
+                "ValueId": "411897",
+                "ValueText": "Through Hole"
+            },
+            {
+                "ParameterId": 16,
+                "ParameterText": "Package / Case",
+                "ParameterType": "String",
+                "ValueId": "392320",
+                "ValueText": "Radial, Can"
+            }
+        ],
+        "BaseProductNumber": {
+            "Id": 609036,
+            "Name": "ECA-1VH"
+        },
+        "Category": {
+            "CategoryId": 3,
+            "ParentId": 0,
+            "Name": "Capacitors",
+            "ProductCount": 0,
+            "NewProductCount": 0,
+            "ImageUrl": "https://mm.digikey.com///mm.digikey.com/Volume0/opasdata/d220001/derivates/3/002/640/398/BCAP0350%20E270%20T11_tmb%2864x64%29.jpg",
+            "SeoDescription": "Capacitor products, also known as \"condensers\", are generally named and organized in reference to the dielectric material incorporated within. Along with variations in construction methods, the choice of dielectric material has strong influence on a given device's relative cost, size, parametric stability, and suitability for a particular application.",
+            "ChildCategories": [
+                {
+                    "CategoryId": 58,
+                    "ParentId": 3,
+                    "Name": "Aluminum Electrolytic Capacitors",
+                    "ProductCount": 0,
+                    "NewProductCount": 0,
+                    "ImageUrl": "https://mm.digikey.com///mm.digikey.com/Volume0/opasdata/d220001/derivates/3/002/236/495/VX-Series-5x12mm_tmb%2864x64%29.jpg",
+                    "SeoDescription": "A capacitor is a passive electronic device that stores electric charge. Polarized aluminum electrolytic capacitors have an anode electrode (+) made of pure aluminum foil, electrolyte that acts as the cathode, and a thin insulating layer of aluminum oxide that acts as the dielectric. Electrolytic capacitors have higher capacitance-voltage (CV) product per unit volume than ceramic capacitors or film capacitors. Applications include audio, automotive, bypass, decoupling, and motor starting capacitors.",
+                    "ChildCategories": []
+                }
+            ]
+        },
+        "DateLastBuyChance": null,
+        "ManufacturerLeadWeeks": "37",
+        "ManufacturerPublicQuantity": 0,
+        "Series": {
+            "Id": 91086,
+            "Name": "NHG-A"
+        },
+        "ShippingInfo": null,
+        "Classifications": {
+            "ReachStatus": "REACH Unaffected",
+            "RohsStatus": "ROHS3 Compliant",
+            "MoistureSensitivityLevel": "Not Applicable",
+            "ExportControlClassNumber": "EAR99",
+            "HtsusCode": "8532.22.0020"
+        },
+        "OtherNames": [
+            "P5555",
+            "ECA1VHG102"
+        ]
+    },
+    "AccountIdUsed": 0,
+    "CustomerIdUsed": 0
+}

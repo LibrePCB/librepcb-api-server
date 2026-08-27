@@ -12,16 +12,13 @@ Only Docker Compose is needed to run this server on a Linux machine.
 
 ## Configuration
 
-To make all features working, a configuration file `config/api.json` is
-required with the following content:
+To make all features working, some environment variables are required. For
+this, you can add a `.env` file with the following content and add your
+credentials:
 
-```json
-{
-     /* Config for endpoint '/parts' */
-     "parts_operational": false,
-     "parts_query_url": "",
-     "parts_query_token": ""
-}
+```
+DIGIKEY_CLIENT_ID=
+DIGIKEY_CLIENT_SECRET=
 ```
 
 ## Usage
