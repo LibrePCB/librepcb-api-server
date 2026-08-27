@@ -6,6 +6,7 @@ services:
       context: .
       args:
         ALPINE_TAG: '3.19'
+    user: "${DOCKER_USER}"  # Set in ./docker-compose.sh
     ports:
       - 8000:8000
     volumes:

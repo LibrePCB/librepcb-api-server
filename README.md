@@ -26,7 +26,7 @@ DIGIKEY_CLIENT_SECRET=
 For local development, the server can be run with this command:
 
 ```bash
-docker-compose up --build
+./docker-compose.sh up --build
 ```
 
 Afterwards, the API runs on http://localhost:8000/:
