@@ -35,7 +35,7 @@ docker-compose up --build
 Afterwards, the API runs on http://localhost:8000/:
 
 ```bash
-curl -X POST -H "Content-Type: application/json" -d @demo-request.json \
+curl -X POST -H "Content-Type: application/json" -d @testdata/request.json \
      'http://localhost:8000/api/v1/parts/query' | jq '.'
 ```
 
