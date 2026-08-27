@@ -7,33 +7,8 @@ class Database:
     def __init__(self, db, logger):
         self._db = db
         self._logger = logger
-
-        with self._db as db:
-            db_version = db.execute('PRAGMA user_version').fetchone()[0]
-            if db_version < 1:
-                logger.info("Migrating database to version 1...")
-                db.execute("""
-                    CREATE TABLE IF NOT EXISTS parts_requests (
-                        id INTEGER PRIMARY KEY NOT NULL,
-                        datetime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                        count INTEGER NOT NULL,
-                        cache_hits INTEGER NOT NULL,
-                        with_result INTEGER NOT NULL
-                    )
-                """)
-                db.execute("""
-                    CREATE TABLE IF NOT EXISTS parts_cache (
-                        id INTEGER PRIMARY KEY NOT NULL,
-                        mpn TEXT NOT NULL,
-                        manufacturer TEXT NOT NULL,
-                        provider TEXT NOT NULL,
-                        datetime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                        part TEXT NOT NULL,
-                        UNIQUE(mpn, manufacturer, provider)
-                    )
-                """)
-                db.execute('PRAGMA user_version=1')
-        self._db.execute("VACUUM")
+        self._run_migrations()
+        self._db.execute("VACUUM")  # Because of the auto cleanup
 
     def add_parts_request(self, count: int, cache_hits: int,
                           with_result: int):
@@ -69,3 +44,39 @@ class Database:
             )
             row = cur.fetchone()
             return literal_eval(row[0]) if row is not None else None
+
+    def _run_migrations(self):
+        with self._db as db:
+            version = db.execute('PRAGMA user_version').fetchone()[0]
+            while self._migrate_to(db, version + 1):
+                version += 1
+
+    def _migrate_to(self, db, version):
+        if hasattr(self, f'_migrate_to_v{version}'):
+            self._logger.info(f"Migrating database to version {version}...")
+            getattr(self, f'_migrate_to_v{version}')(db)
+            db.execute(f'PRAGMA user_version={version}')
+            return True
+        return False
+
+    def _migrate_to_v1(self, db):
+        db.execute("""
+            CREATE TABLE IF NOT EXISTS parts_requests (
+                id INTEGER PRIMARY KEY NOT NULL,
+                datetime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                count INTEGER NOT NULL,
+                cache_hits INTEGER NOT NULL,
+                with_result INTEGER NOT NULL
+            )
+        """)
+        db.execute("""
+            CREATE TABLE IF NOT EXISTS parts_cache (
+                id INTEGER PRIMARY KEY NOT NULL,
+                mpn TEXT NOT NULL,
+                manufacturer TEXT NOT NULL,
+                provider TEXT NOT NULL,
+                datetime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                part TEXT NOT NULL,
+                UNIQUE(mpn, manufacturer, provider)
+            )
+        """)
