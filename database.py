@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from ast import literal_eval
 
 
@@ -14,8 +12,7 @@ class Database:
         with self._db as db:
             cur = db.cursor()
             cur.execute(
-                "SELECT integer, real, text, blob FROM key_values WHERE key=?",
-                (key,)
+                "SELECT integer, real, text, blob FROM key_values WHERE key=?", (key,)
             )
             row = cur.fetchone()
             for value in row or []:
@@ -24,7 +21,13 @@ class Database:
             return None
 
     def set_key_value(self, key: str, value):
-        columns = {int: 'integer', float: 'real', str: 'text', bytes: 'blob', type(None): 'integer'}
+        columns = {
+            int: "integer",
+            float: "real",
+            str: "text",
+            bytes: "blob",
+            type(None): "integer",
+        }
         column = columns[type(value)]
         with self._db as db:
             db.execute(
@@ -32,17 +35,16 @@ class Database:
                 f"ON CONFLICT(key) DO UPDATE "
                 f"SET integer=excluded.integer, real=excluded.real, "
                 f"    text=excluded.text, blob=excluded.blob",
-                (key, value)
+                (key, value),
             )
 
-    def add_parts_request(self, count: int, cache_hits: int,
-                          with_result: int):
+    def add_parts_request(self, count: int, cache_hits: int, with_result: int):
         with self._db as db:
             db.execute(
                 "INSERT INTO parts_requests "
                 "(count, cache_hits, with_result) "
                 "VALUES (?, ?, ?)",
-                (count, cache_hits, with_result)
+                (count, cache_hits, with_result),
             )
 
     def add_parts_cache(self, provider: str, part: dict):
@@ -54,7 +56,7 @@ class Database:
                 "ON CONFLICT(mpn, manufacturer, provider) DO UPDATE SET "
                 "  datetime = CURRENT_TIMESTAMP, "
                 "  part = excluded.part",
-                (part['mpn'], part['manufacturer'], provider, str(part))
+                (part["mpn"], part["manufacturer"], provider, str(part)),
             )
 
     def get_parts_cache(self, mpn, manufacturer, max_age):
@@ -65,7 +67,7 @@ class Database:
                 "WHERE mpn=? AND manufacturer=? "
                 "AND datetime >= datetime('now', ?)"
                 "ORDER BY datetime DESC",
-                (mpn, manufacturer, f"-{max_age} seconds")
+                (mpn, manufacturer, f"-{max_age} seconds"),
             )
             row = cur.fetchone()
             return literal_eval(row[0]) if row is not None else None
@@ -76,7 +78,7 @@ class Database:
             db.executemany(
                 "INSERT INTO digikey_manufacturers (id, name, normalized) "
                 "VALUES (?, ?, ?)",
-                rows
+                rows,
             )
 
     def get_digikey_manufacturer_ids(self, normalized_name, limit=3):
@@ -95,15 +97,15 @@ class Database:
 
     def _run_migrations(self):
         with self._db as db:
-            version = db.execute('PRAGMA user_version').fetchone()[0]
+            version = db.execute("PRAGMA user_version").fetchone()[0]
             while self._migrate_to(db, version + 1):
                 version += 1
 
     def _migrate_to(self, db, version):
-        if hasattr(self, f'_migrate_to_v{version}'):
+        if hasattr(self, f"_migrate_to_v{version}"):
             self._logger.info(f"Migrating database to version {version}...")
-            getattr(self, f'_migrate_to_v{version}')(db)
-            db.execute(f'PRAGMA user_version={version}')
+            getattr(self, f"_migrate_to_v{version}")(db)
+            db.execute(f"PRAGMA user_version={version}")
             return True
         return False
 

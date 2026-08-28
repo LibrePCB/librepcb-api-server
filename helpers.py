@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import fcntl
 
 
@@ -19,44 +17,45 @@ class CriticalSection:
 
 
 MANUFACTURER_REPLACEMENTS = {
-    ',': '',
-    'ä': 'ae',
-    'ö': 'oe',
-    'ü': 'ue',
-    'texas instruments': 'ti',
-    'stmicroelectronics': 'st',
-    'creeled': 'cree led',
+    ",": "",
+    "ä": "ae",
+    "ö": "oe",
+    "ü": "ue",
+    "texas instruments": "ti",
+    "stmicroelectronics": "st",
+    "creeled": "cree led",
 }
 
-MANUFACTURER_REMOVALS = set([
-    'america',
-    'contact',
-    'devices',
-    'electronics',
-    'inc.',
-    'inc',
-    'incorporated',
-    'industries',
-    'integrated',
-    'international',
-    'limited',
-    'ltd.',
-    'ltd',
-    'llc',
-    'gmbh',
-    'ag',
-    'microelectronics',
-    'semiconductor',
-    'semiconductors',
-    'solutions',
-    'systems',
-    'technology',
-    'usa',
-])
+MANUFACTURER_REMOVALS = {
+    "america",
+    "contact",
+    "devices",
+    "electronics",
+    "inc.",
+    "inc",
+    "incorporated",
+    "industries",
+    "integrated",
+    "international",
+    "limited",
+    "ltd.",
+    "ltd",
+    "llc",
+    "gmbh",
+    "ag",
+    "microelectronics",
+    "semiconductor",
+    "semiconductors",
+    "solutions",
+    "systems",
+    "technology",
+    "usa",
+}
+
 
 def normalize_manufacturer(name: str) -> str:
     name = name.lower()
     for old, new in MANUFACTURER_REPLACEMENTS.items():
         name = name.replace(old, new)
-    terms = [s for s in name.split(' ') if s not in MANUFACTURER_REMOVALS]
-    return ' '.join(terms)
+    terms = [s for s in name.split(" ") if s not in MANUFACTURER_REMOVALS]
+    return " ".join(terms)
