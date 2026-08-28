@@ -6,12 +6,9 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
-        with:
-          python-version: "3.11"
-      - name: Install dependencies
-        run: pip install -r requirements-dev.txt
-      - name: Run flake8
-        run: flake8
-      - name: Run isort
-        run: isort --check --diff .
+      - name: Install UV
+        uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
+      - name: Check Format
+        run: uv run ruff format --check
+      - name: Linting
+        run: uv run ruff check

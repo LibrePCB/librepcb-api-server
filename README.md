@@ -36,6 +36,15 @@ curl -X POST -H "Content-Type: application/json" -d @testdata/request.json \
      'http://localhost:8000/api/v1/parts/query' | jq '.'
 ```
 
+## Development
+
+To format & check Python files, use UV and Ruff:
+
+```bash
+uv run ruff format
+uv run ruff check
+```
+
 ## License
 
 The content in this repository is published under the

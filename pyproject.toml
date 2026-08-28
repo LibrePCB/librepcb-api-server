@@ -1,0 +1,11 @@
+[project]
+name = "librepcb-api-server"
+version = "0.1.0"
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = []
+
+[dependency-groups]
+dev = [
+    "ruff>=0.16.5",
+]
