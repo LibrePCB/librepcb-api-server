@@ -1,12 +1,24 @@
 {
     "parts": [
       {
-        "mpn": "1N4148",
-        "manufacturer": "Vishay"
-      },
-      {
         "mpn": "NE555P",
         "manufacturer": "Texas Instruments"
+      },
+      {
+        "mpn": "STM32C011F4U6TR",
+        "manufacturer": "STMicroelectronics"
+      },
+      {
+        "mpn": "MSPM0C1103SDSGR",
+        "manufacturer": "Texas Instruments"
+      },
+      {
+        "mpn": "ATTINY4-TSHR",
+        "manufacturer": "Microchip Technology"
+      },
+      {
+        "mpn": "1N4148",
+        "manufacturer": "Vishay"
       }
     ]
 }
