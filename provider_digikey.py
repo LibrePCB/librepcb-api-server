@@ -1,6 +1,7 @@
 import os
 import time
 import urllib.parse
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 import requests
 
@@ -8,6 +9,7 @@ from helpers import normalize_manufacturer
 
 CLIENT_ID = os.environ.get("DIGIKEY_CLIENT_ID")
 CLIENT_SECRET = os.environ.get("DIGIKEY_CLIENT_SECRET")
+MAX_PARALLEL_REQUESTS = 10
 
 STATUS_MAP = {
     "active": "Active",
@@ -39,21 +41,36 @@ class DigiKey:
         if len(filtered_parts) == 0:
             return 0
 
-        # Get/refresh token, abort on error.
-        token = self._get_token()
-        if not token:
-            return 0
+        with requests.Session() as session:
+            # Get/refresh token, abort on error.
+            token = self._get_token(session)
+            if not token:
+                return 0
+            session.headers.update(
+                {
+                    "X-DIGIKEY-Client-Id": CLIENT_ID,
+                    "X-DIGIKEY-Locale-Site": "US",
+                    "X-DIGIKEY-Locale-Language": "en",
+                    "X-DIGIKEY-Locale-Currency": "USD",
+                    "X-DIGIKEY-Customer-Id": "0",
+                    "Authorization": f"Bearer {token}",
+                }
+            )
 
-        # Refresh manufacturers.
-        self._refresh_manufacturers(token)
+            # Refresh manufacturers.
+            self._refresh_manufacturers(session)
 
-        # Fetch parts.
-        for i in range(len(parts)):
-            if ("results" not in parts[i]) and self._get_part(parts[i], token):
-                self._db.add_parts_cache(self.ID, parts[i])
+            # Fetch parts with multiple threads in parallel.
+            with ThreadPoolExecutor(max_workers=MAX_PARALLEL_REQUESTS) as ex:
+                futures = {
+                    ex.submit(self._get_part, session, p): p for p in filtered_parts
+                }
+                for future in as_completed(futures):
+                    if part_to_cache := future.result():  # re-throws exception
+                        self._db.add_parts_cache(self.ID, part_to_cache)
         return 0
 
-    def _get_token(self):
+    def _get_token(self, session):
         if not CLIENT_ID or not CLIENT_SECRET:
             return False
 
@@ -65,7 +82,7 @@ class DigiKey:
 
         # Request new token.
         self._logger.debug("Refreshing token...")
-        response = requests.post(
+        response = session.post(
             "https://api.digikey.com/v1/oauth2/token",
             data={
                 "client_id": CLIENT_ID,
@@ -87,7 +104,7 @@ class DigiKey:
         self._db.set_key_value("digikey_token_validity", int(time.time() + expires_in))
         return token
 
-    def _refresh_manufacturers(self, token):
+    def _refresh_manufacturers(self, session):
         # Check timestamp of last update.
         ts = self._db.get_key_value("digikey_manufacturers_timestamp") or 0
         if ts > time.time() - 7 * 24 * 3600:
@@ -98,9 +115,8 @@ class DigiKey:
 
         # Request new list.
         self._logger.debug("Refreshing manufacturers...")
-        response = requests.get(
+        response = session.get(
             "https://api.digikey.com/products/v4/search/manufacturers",
-            headers=self._build_headers(token),
             timeout=10.0,
         )
         if self._handle_rate_limit(response):
@@ -117,7 +133,7 @@ class DigiKey:
         self._db.set_digikey_manufacturers(rows)
         self._logger.debug(f"Stored {len(rows)} manufacturers in database")
 
-    def _get_part(self, part, token):
+    def _get_part(self, session, part):
         mpn = urllib.parse.quote(part["mpn"], safe="")
         mfr = normalize_manufacturer(part["manufacturer"])
         mfr_ids = MANUFACTURER_MAP.get(mfr)
@@ -125,18 +141,17 @@ class DigiKey:
             mfr_ids = self._db.get_digikey_manufacturer_ids(mfr)
         if len(mfr_ids) == 0:
             self._logger.debug(f"Manufacturer not found: {mfr}")
-            return False
+            return None  # Don't store in cache
 
         part["results"] = 0
         for mfr_id in mfr_ids:
-            response = requests.get(
+            response = session.get(
                 f"https://api.digikey.com/products/v4/search/{mpn}/productdetails",
                 params={"manufacturerId": mfr_id},
-                headers=self._build_headers(token),
                 timeout=10.0,
             )
             if self._handle_rate_limit(response):
-                return False
+                return None  # Don't store in cache
             product = response.json().get("Product")
             if product:
                 part["results"] = 1
@@ -203,10 +218,10 @@ class DigiKey:
                             "url": datasheet_url,
                         },
                     ]
-                return True
+                return part  # Store in cache
 
         self._logger.debug(f"Part not found: '{mpn}' from '{mfr}'")
-        return True
+        return part  # Store in cache
 
     def _get_prices_of_product_variation(self, variation):
         prices = []
@@ -226,13 +241,3 @@ class DigiKey:
                 "digikey_token_validity", int(time.time() + retry_after)
             )
             return True
-
-    def _build_headers(self, token):
-        return {
-            "X-DIGIKEY-Client-Id": CLIENT_ID,
-            "X-DIGIKEY-Locale-Site": "US",
-            "X-DIGIKEY-Locale-Language": "en",
-            "X-DIGIKEY-Locale-Currency": "USD",
-            "X-DIGIKEY-Customer-Id": "0",
-            "Authorization": f"Bearer {token}",
-        }

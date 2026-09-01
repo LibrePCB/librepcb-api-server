@@ -10,7 +10,7 @@ app = Flask(__name__)
 app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 
 PARTS_MAX_COUNT = 10  # Rather low due to slow DigiKey API
-PARTS_CACHE_MAX_AGE = 60 * 24 * 3600  # 60 days due to quota limits
+PARTS_CACHE_MAX_AGE = 30 * 24 * 3600  # adjust according to quota limits
 LOCK_PATH = "/tmp/librepcb-api-server.lock"
 
 

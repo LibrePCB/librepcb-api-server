@@ -1,10 +1,12 @@
 import sqlite3
+import threading
 from ast import literal_eval
 
 
 class Database:
     def __init__(self, path, logger):
         self._db = sqlite3.connect(path, check_same_thread=False)
+        self._lock = threading.Lock()
         self._logger = logger
 
     def run_migrations(self):
@@ -18,7 +20,7 @@ class Database:
         self._db.close()
 
     def get_key_value(self, key: str):
-        self._db as db:
+        with self._lock, self._db as db:
             cur = db.cursor()
             cur.execute(
                 "SELECT integer, real, text, blob FROM key_values WHERE key=?",
@@ -39,7 +41,7 @@ class Database:
             type(None): "integer",
         }
         column = columns[type(value)]
-        self._db as db:
+        with self._lock, self._db as db:
             db.execute(
                 f"INSERT INTO key_values (key, {column}) VALUES (?, ?) "
                 f"ON CONFLICT(key) DO UPDATE "
@@ -49,7 +51,7 @@ class Database:
             )
 
     def add_parts_request(self, count: int, cache_hits: int, with_result: int):
-        self._db as db:
+        with self._lock, self._db as db:
             db.execute(
                 "INSERT INTO parts_requests "
                 "(count, cache_hits, with_result) "
@@ -58,7 +60,7 @@ class Database:
             )
 
     def add_parts_cache(self, provider: str, part: dict):
-        self._db as db:
+        with self._lock, self._db as db:
             db.execute(
                 "INSERT INTO parts_cache "
                 "(mpn, manufacturer, provider, part) "
@@ -70,7 +72,7 @@ class Database:
             )
 
     def get_parts_cache(self, mpn, manufacturer, max_age):
-        self._db as db:
+        with self._lock, self._db as db:
             cur = db.cursor()
             cur.execute(
                 "SELECT part FROM parts_cache "
@@ -83,7 +85,7 @@ class Database:
             return literal_eval(row[0]) if row is not None else None
 
     def set_digikey_manufacturers(self, rows):
-        self._db as db:
+        with self._lock, self._db as db:
             db.execute("DELETE FROM digikey_manufacturers")
             db.executemany(
                 "INSERT INTO digikey_manufacturers (id, name, normalized) "
@@ -92,7 +94,7 @@ class Database:
             )
 
     def get_digikey_manufacturer_ids(self, normalized_name, limit=3):
-        self._db as db:
+        with self._lock, self._db as db:
             cur = db.cursor()
             cur.execute(
                 "SELECT id FROM digikey_manufacturers "
