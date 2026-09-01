@@ -1,5 +1,3 @@
-import sqlite3
-
 from flask import Flask, g, make_response, request, send_from_directory, url_for
 from werkzeug.middleware.proxy_fix import ProxyFix
 
@@ -19,8 +17,13 @@ LOCK_PATH = "/tmp/librepcb-api-server.lock"
 def _get_db():
     db = getattr(g, "_db", None)
     if db is None:
-        db = g._database = sqlite3.connect("/data/db.sqlite")
+        db = g._db = Database("/data/db.sqlite", app.logger)
     return db
+
+
+# Initialize database once on startup
+with app.app_context():
+    _get_db().run_migrations()
 
 
 @app.teardown_appcontext
@@ -57,7 +60,7 @@ def parts_query():
     parts = [{"mpn": p["mpn"], "manufacturer": p["manufacturer"]} for p in parts]
 
     # Prepare database & providers.
-    db = Database(_get_db(), app.logger)
+    db = _get_db()
     providers = [
         PartsCache(db, max_age=PARTS_CACHE_MAX_AGE),
         DigiKey(db, app.logger),
